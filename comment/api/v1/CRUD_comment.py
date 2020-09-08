@@ -3,9 +3,9 @@ from rest_framework import status
 from rest_framework.views import APIView
 
 from accounts.models import User
-from booked.models import BookedRoom
+from book.models import BookRoom
 from comment.models import Comment
-from comment.serializer.comment_serializer import CommentSerializer
+from comment.serializer import CommentSerializer
 from core.http import JsonResponse
 
 
@@ -23,12 +23,12 @@ class CommentAPI(APIView):
             comment.title = data.get('title')
             comment.body = data.get('body')
             comment.rate = data.get('rate')
-            comment.booked_room = BookedRoom.objects.get(pk=data['booked_room_id'])
+            comment.booked_room = BookRoom.objects.get(pk=data['booked_room_id'])
             comment.save()
             return JsonResponse(status=status.HTTP_201_CREATED, message='create successful')
         except User.DoesNotExist:
             return JsonResponse(status=status.HTTP_404_NOT_FOUND, message="wrong id - user not found")
-        except BookedRoom.DoesNotExist:
+        except BookRoom.DoesNotExist:
             return JsonResponse(status=status.HTTP_404_NOT_FOUND, message="wrong id - booked_room not found")
         except IntegrityError:
             return JsonResponse(status=status.HTTP_400_BAD_REQUEST, message='for a booked_room you can add one comment')

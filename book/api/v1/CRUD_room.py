@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.views import APIView
 
-from booked.models import Room
-from booked.serializer import RoomSerializer
+from book.models import Room
+from book.serializer import RoomSerializer
 from core.http import JsonResponse
 
 

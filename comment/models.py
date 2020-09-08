@@ -1,5 +1,5 @@
 from accounts.models import User
-from booked.models import Room, BookedRoom
+from book.models import Room, BookRoom, BookedRoom
 from core import model
 
 

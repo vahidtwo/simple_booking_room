@@ -54,3 +54,6 @@ class User(AbstractBaseUser, model.AbstractBaseModel, PermissionsMixin):
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['phone_number']
+
+    def __str__(self):
+        return self.username

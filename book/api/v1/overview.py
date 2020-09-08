@@ -9,7 +9,7 @@ from core.http import JsonResponse
 
 class OverviewAPI(APIView):
     def get(self, request, id):
-        print( request.query_params.get('return'))
+        print(request.query_params.get('return'))
         comment = Comment.objects.select_related('booked_room__room').filter(booked_room__room_id=id)
         data = CommentSerializer(comment, exclude=('room_rate',), many=True).data
         room_rate = Comment.objects.select_related('booked_room__room').filter(
