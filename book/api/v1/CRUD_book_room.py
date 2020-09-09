@@ -80,16 +80,16 @@ class BookedRoomAPI(APIView):
 
     def get(self, request):
         """ get all non booked room"""
-        # try:
-        date_format = '%Y-%m-%d'
-        start_at = datetime.datetime.strptime(request.query_params['start_at'], date_format)
-        end_at = datetime.datetime.strptime(request.query_params['end_at'], date_format)
-        book_room = BookRoom.objects.filter(is_active=True, booked_room__isnull=True, start_at__date__gte=start_at,
-                                            end_at__date__lte=end_at)
-        data = BookRoomSerializer(book_room, many=True).data
-        return JsonResponse(data=data)
-        # except Exception as e:
-        #     return JsonResponse(status=status.HTTP_400_BAD_REQUEST, message=str(e))
+        try:
+            date_format = '%Y-%m-%d'
+            start_at = datetime.datetime.strptime(request.query_params['start_at'], date_format)
+            end_at = datetime.datetime.strptime(request.query_params['end_at'], date_format)
+            book_room = BookRoom.objects.filter(is_active=True, booked_room__isnull=True, start_at__date__gte=start_at,
+                                                end_at__date__lte=end_at)
+            data = BookRoomSerializer(book_room, many=True).data
+            return JsonResponse(data=data)
+        except Exception as e:
+            return JsonResponse(status=status.HTTP_400_BAD_REQUEST, message=str(e))
 
     def delete(self, request, id):
         try:
