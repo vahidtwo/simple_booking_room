@@ -1,5 +1,5 @@
 from accounts.serializer import UserSerializer
-from book.models import BookRoom, BookedRoom
+from book.models import BookRoom, BookedRoom, Listing
 from book.models import Room
 from core import serializers
 
@@ -29,6 +29,7 @@ class BookRoomSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.user = validated_data.get('user', instance.user)
         instance.room = validated_data.get('room', instance.room)
+        instance.price = validated_data.get('price', instance.price)
         instance.start_at = validated_data.get('start_at')
         instance.end_at = validated_data.get('end_at')
         instance.is_active = validated_data.get('is_active', instance.is_active)
@@ -47,3 +48,9 @@ class BookedRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookedRoom
         fields = "__all__"
+
+
+class ListingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Listing
+        fields = '__all__'

@@ -24,8 +24,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_room_rate(self, obj):
         return Comment.objects.select_related('booked_room__bookroom__room').filter(
-            booked_room__bookroom__room_id=obj.booked_room.bookroom.room.id).aggregate(room_rate=Avg('rate'))[
-            'room_rate']
+            is_active=True, booked_room__bookroom__room_id=obj.booked_room.bookroom.room.id).aggregate(
+            room_rate=Avg('rate'))['room_rate']
 
     def get_user(self, obj):
         return UserSerializer(obj.booked_room.user).data

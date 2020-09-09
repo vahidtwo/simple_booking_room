@@ -1,11 +1,11 @@
 import datetime
 
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.views import APIView
 
 from accounts.models import User
-from book.models import BookRoom, Room, BookedRoom
-from book.serializer import BookRoomSerializer
+from book.models import BookRoom, Room, BookedRoom, Listing
+from book.serializer import BookRoomSerializer, ListingSerializer
 from core.http import JsonResponse
 
 
@@ -25,6 +25,7 @@ class BookRoomAPI(APIView):
             date_format = '%Y-%m-%d %H:%M:%S'
             booked_room.start_at = datetime.datetime.strptime(data['start_at'], date_format)
             booked_room.end_at = datetime.datetime.strptime(data['end_at'], date_format)
+            booked_room.price = data['price']
             booked_room.save()
             return JsonResponse(status=status.HTTP_201_CREATED)
         except User.DoesNotExist:
@@ -83,7 +84,7 @@ class BookedRoomAPI(APIView):
         date_format = '%Y-%m-%d'
         start_at = datetime.datetime.strptime(request.query_params['start_at'], date_format)
         end_at = datetime.datetime.strptime(request.query_params['end_at'], date_format)
-        book_room = BookRoom.objects.filter(booked_room__isnull=True, start_at__date__gte=start_at,
+        book_room = BookRoom.objects.filter(is_active=True, booked_room__isnull=True, start_at__date__gte=start_at,
                                             end_at__date__lte=end_at)
         data = BookRoomSerializer(book_room, many=True).data
         return JsonResponse(data=data)
@@ -95,3 +96,8 @@ class BookedRoomAPI(APIView):
             BookedRoom.objects.get(pk=id).delete()
         except BookedRoom.DoesNotExist:
             return JsonResponse(status=status.HTTP_404_NOT_FOUND, message='wrong id - booked room not found')
+
+
+class ListingViewSet(viewsets.ModelViewSet):
+    queryset = Listing.objects.all()
+    serializer_class = ListingSerializer
