@@ -11,7 +11,6 @@ class RoomSerializer(serializers.ModelSerializer):
         instance.size = validated_data.get('size', instance.size)
         instance.is_vip = validated_data.get('is_vip', instance.is_vip)
         instance.has_good_view = validated_data.get('has_good_view', instance.has_good_view)
-        instance.is_active = validated_data.get('is_active', instance.is_active)
         instance.room_number = validated_data.get('room_number', instance.room_number)
         instance.description = validated_data.get('description', instance.description)
         instance.save()
@@ -23,7 +22,7 @@ class RoomSerializer(serializers.ModelSerializer):
 
 
 class BookRoomSerializer(serializers.ModelSerializer):
-    room = RoomSerializer(exclude=('priority', 'is_active', 'created_at', 'updated_at'), read_only=True)
+    room = RoomSerializer(exclude=('created_at', 'updated_at'), read_only=True)
     user = UserSerializer(read_only=True)
 
     def update(self, instance, validated_data):
@@ -32,7 +31,6 @@ class BookRoomSerializer(serializers.ModelSerializer):
         instance.price = validated_data.get('price', instance.price)
         instance.start_at = validated_data.get('start_at')
         instance.end_at = validated_data.get('end_at')
-        instance.is_active = validated_data.get('is_active', instance.is_active)
         instance.save()
         return instance
 

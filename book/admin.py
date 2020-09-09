@@ -12,7 +12,7 @@ class RoomAdmin(AbstractBaseAdmin):
 
 
 class BookRoomAdmin(AbstractBaseAdmin):
-    list_display = ('id', 'get_username', 'get_room_number', 'price', 'start_at', 'end_at', 'is_active')
+    list_display = ('id', 'get_username', 'get_room_number', 'price', 'start_at', 'end_at')
     list_editable = ()
     search_fields = ('id', 'room__listing__name', 'room__room_number')
     list_filter = ('room__room_number', 'room__listing__name')

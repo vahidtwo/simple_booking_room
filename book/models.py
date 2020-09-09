@@ -39,7 +39,7 @@ class BookRoom(model.AbstractBaseModel):
         return f'room {self.room.room_number} in {self.start_at.date()}'
 
     def is_available(self):
-        return not BookRoom.objects.filter(is_active=True, room=self.room).filter(
+        return not BookRoom.objects.filter(room=self.room).filter(
             model.Q(start_at__lte=self.start_at, end_at__gte=self.end_at) |
             model.Q(start_at__lte=self.start_at, end_at__lte=self.end_at, end_at__gt=self.start_at) |
             model.Q(start_at__gte=self.start_at, end_at__gte=self.end_at, start_at__lt=self.end_at) |

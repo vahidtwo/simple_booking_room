@@ -21,7 +21,6 @@ class RoomAPI(APIView):
             room.size = data.get('size')
             room.is_vip = data.get('is_vip')
             room.has_good_view = data.get('has_good_view')
-            room.is_active = data.get('is_active', True)
             room.room_number = data.get('room_number')
             room.description = data.get('description')
             room.save()

@@ -7,15 +7,14 @@ from django.http.response import HttpResponseBase
 
 
 class AbstractBaseAdmin(admin.ModelAdmin):
-    default_list_display = ('is_active', 'priority', 'created_at')
+    default_list_display = ('created_at',)
     list_display = ('id', '__str__') + default_list_display
-    default_list_filter = ('is_active', 'created_at', 'updated_at')
+    default_list_filter = ('created_at', 'updated_at')
     list_filter = default_list_filter
     default_search_fields = ('id',)
     search_fields = default_search_fields
-    ordering = ('-priority',)
     readonly_fields = ('created_at', 'updated_at')
-    default_fieldset = (None, {'fields': (('is_active', 'priority', 'created_at', 'updated_at'),)})
+    default_fieldset = (None, {'fields': (('created_at', 'updated_at'),)})
 
     def changelist_view(self, request, extra_context=None):
         actions = self.get_actions(request)

@@ -84,7 +84,7 @@ class BookedRoomAPI(APIView):
             date_format = '%Y-%m-%d'
             start_at = datetime.datetime.strptime(request.query_params['start_at'], date_format)
             end_at = datetime.datetime.strptime(request.query_params['end_at'], date_format)
-            book_room = BookRoom.objects.filter(is_active=True, booked_room__isnull=True, start_at__date__gte=start_at,
+            book_room = BookRoom.objects.filter(booked_room__isnull=True, start_at__date__gte=start_at,
                                                 end_at__date__lte=end_at)
             data = BookRoomSerializer(book_room, many=True).data
             return JsonResponse(data=data)
