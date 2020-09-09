@@ -56,7 +56,13 @@ class BookRoom(model.AbstractBaseModel):
 
 class BookedRoom(model.AbstractBaseModel):
     user = model.ForeignKey(User, on_delete=model.PROTECT, related_name='booked_room')
-    book_room = model.OneToOneField(BookRoom, on_delete=model.PROTECT, related_name='booked_room')
+    book_room = model.ForeignKey(BookRoom, on_delete=model.PROTECT, related_name='booked_room')
+
+    def save(self, *args, **kwargs):
+        if not BookedRoom.objects.filter(book_room=self.book_room).exists():
+            super().save(*args, **kwargs)
+        else:
+            raise ValueError('this room booked before')
 
     def __str__(self):
         return f'{self.user.username} booked {self.book_room.room.room_number}'
