@@ -12,19 +12,15 @@ class RoomAdmin(AbstractBaseAdmin):
 
 
 class BookRoomAdmin(AbstractBaseAdmin):
-    list_display = ('id', 'get_username', 'get_room_number', 'price', 'start_at', 'end_at')
+    list_display = ('id', 'get_room_number', 'price', 'start_at', 'end_at')
     list_editable = ()
     search_fields = ('id', 'room__listing__name', 'room__room_number')
     list_filter = ('room__room_number', 'room__listing__name')
-    list_select_related = ('room__user',)
-
-    def get_username(self, obj):
-        return obj.room.user.username
+    list_select_related = ('room__listing',)
 
     def get_room_number(self, obj):
         return obj.room.room_number
 
-    get_username.short_description = 'username'
     get_room_number.short_description = 'room_number'
 
 
@@ -33,8 +29,11 @@ class ListingAdmin(AbstractBaseAdmin):
     list_filter = ('user',)
 
 
+class BookedRoomAdmin(AbstractBaseAdmin):
+    list_display = ('id', '__str__')
+
 
 admin.site.register(Listing, ListingAdmin)
 admin.site.register(BookRoom, BookRoomAdmin)
 admin.site.register(Room, RoomAdmin)
-admin.site.register(BookedRoom)
+admin.site.register(BookedRoom, BookedRoomAdmin)

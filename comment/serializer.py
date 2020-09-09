@@ -20,11 +20,11 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['rate', 'title', 'body', 'user', 'room_rate', 'booked_room']
+        fields = ['rate', 'title', 'body', 'user', 'room_rate', 'book_room']
 
     def get_room_rate(self, obj):
-        return Comment.objects.select_related('booked_room__bookroom__room').filter(
-            booked_room__bookroom__room_id=obj.booked_room.bookroom.room.id).aggregate(
+        return Comment.objects.select_related('booked_room__book_room__room').filter(
+            booked_room__book_room__room_id=obj.booked_room.book_room.room.id).aggregate(
             room_rate=Avg('rate'))['room_rate']
 
     def get_user(self, obj):

@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.views import APIView
 
-from book.models import Room
+from book.models import Room, Listing
 from book.serializer import RoomSerializer
 from core.http import JsonResponse
 
@@ -23,8 +23,11 @@ class RoomAPI(APIView):
             room.has_good_view = data.get('has_good_view')
             room.room_number = data.get('room_number')
             room.description = data.get('description')
+            room.listing = Listing.objects.get(pk=data['listing_id'])
             room.save()
             return JsonResponse(status=status.HTTP_201_CREATED, message='create successful')
+        except Listing.DoesNotExist:
+            return JsonResponse(message='wrong id - listing not found', status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return JsonResponse(message=str(e), status=status.HTTP_400_BAD_REQUEST)
 
@@ -41,9 +44,16 @@ class RoomAPI(APIView):
         try:
             data = dict(request.data)
             room = Room.objects.get(pk=id)
+            try:
+                listing = Listing.objects.get(pk=data['listing_id'])
+            except Listing.DoesNotExist:
+                listing = None
             ser = RoomSerializer(room, data)
             if ser.is_valid():
-                ser.save()
+                if listing:
+                    ser.save(listing=listing)
+                else:
+                    ser.save()
                 return JsonResponse(message='update successful')
             else:
                 return JsonResponse(status=status.HTTP_400_BAD_REQUEST, message=ser.errors)

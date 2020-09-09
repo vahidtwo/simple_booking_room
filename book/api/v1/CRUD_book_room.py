@@ -21,15 +21,12 @@ class BookRoomAPI(APIView):
             data = request.data
             booked_room = BookRoom()
             booked_room.room = Room.objects.get(room_number=data['room_number'])
-            booked_room.user = User.objects.get(pk=data['user_id'])
             date_format = '%Y-%m-%d %H:%M:%S'
             booked_room.start_at = datetime.datetime.strptime(data['start_at'], date_format)
             booked_room.end_at = datetime.datetime.strptime(data['end_at'], date_format)
             booked_room.price = data['price']
             booked_room.save()
             return JsonResponse(status=status.HTTP_201_CREATED)
-        except User.DoesNotExist:
-            return JsonResponse(status=status.HTTP_404_NOT_FOUND, message='wrong id - user not found')
         except Room.DoesNotExist:
             return JsonResponse(status=status.HTTP_404_NOT_FOUND, message='wrong id - Room not found')
         except Exception as e:
@@ -47,16 +44,15 @@ class BookRoomAPI(APIView):
             data = dict(request.data)
             booked_room = BookRoom.objects.get(pk=id)
             try:
-                user = User.objects.get(pk=data.get('user_id'))
-            except User.DoesNotExist:
-                return JsonResponse(status=status.HTTP_404_NOT_FOUND, message='wrong id - user does not exists')
-            try:
                 room = Room.objects.get(room_number=data.get('room_number'))
             except Room.DoesNotExist:
-                return JsonResponse(status=status.HTTP_404_NOT_FOUND, message='wrong id - room does not exists')
-            ser = BookRoomSerializer(booked_room, data)
+                room = None
+            ser = BookRoomSerializer(booked_room, data, partial=True)
             if ser.is_valid():
-                ser.save(user=user, room=room)
+                if room:
+                    ser.save(room=room)
+                else:
+                    ser.save()
                 return JsonResponse(message='update successful')
             else:
                 return JsonResponse(message=ser.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -77,6 +73,8 @@ class BookedRoomAPI(APIView):
             return JsonResponse(status=status.HTTP_404_NOT_FOUND, message='wrong id - user not found')
         except BookRoom.DoesNotExist:
             return JsonResponse(status=status.HTTP_404_NOT_FOUND, message='wrong id - bookroom not found')
+        except ValueError as e:
+            return JsonResponse(status=status.HTTP_400_BAD_REQUEST, message=str(e))
 
     def get(self, request):
         """ get all non booked room"""
@@ -94,6 +92,7 @@ class BookedRoomAPI(APIView):
     def delete(self, request, id):
         try:
             BookedRoom.objects.get(pk=id).delete()
+            return JsonResponse(message='delete successful')
         except BookedRoom.DoesNotExist:
             return JsonResponse(status=status.HTTP_404_NOT_FOUND, message='wrong id - booked room not found')
 
